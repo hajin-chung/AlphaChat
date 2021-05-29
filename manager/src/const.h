@@ -23,3 +23,4 @@
 
 // res specific
 #define LOG_MAX_LEN 100
+#define MAX_REQ_BUF_SIZE 1024

@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "room.h"
 
 int new_room_id()
@@ -35,21 +39,24 @@ int room_contains_user(int room_id, int user_id)
     return flag;
 }
 
-void push_history(int room_id, struct SendChat chat)
+void push_history(int room_id, char* buf)
 {
     int i;
-    struct ROOM room = rooms[room_id];
+    struct ROOM* room = &rooms[room_id];
+    int hcnt = room->history_cnt;
 
-    if(room.history_cnt >= ROOM_HISTORY_LEN)
+    if(hcnt >= ROOM_HISTORY_LEN)
     {
-        for(i=0 ; i<ROOM_HISTORY_LEN ; i++)
+        for(i=0 ; i<ROOM_HISTORY_LEN-1 ; i++)
         {
-            room.history[i] = room.history[i+1];
+            memcpy(room->history[i], room->history[i+1], MAX_REQ_BUF_SIZE);
         }
     }
-    else
+
+    if(hcnt < ROOM_HISTORY_LEN)
     {
-        room.history_cnt++;
+        room->history_cnt++;
     }
-    room.history[room.history_cnt] = chat;
+    memcpy(room->history[hcnt], buf, MAX_REQ_BUF_SIZE); 
+    printf("[*] Chat pushed to room %d hcnt %d\n", room_id, hcnt);
 }

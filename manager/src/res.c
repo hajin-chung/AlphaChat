@@ -11,9 +11,7 @@
 // TODO error handling
 void send_to_user(int uid, char* buf, int size)
 {
-    struct USER user = users[uid];
-
-    write(user.sock, buf, size);
+    write(users[uid].sock, buf, size);
 }
 
 void response_code(int uid, int code, char* log, int size)
@@ -84,25 +82,9 @@ void res_room_list(int uid)
 void res_room_connect(int user_id, int room_id)
 {
     int i;
-    struct ROOM room = rooms[room_id];
-    char* buf;
-    int size = 4*3 + CONTENTS_MAX_LEN;
-    int offset = 0;
 
-    buf = malloc(size); 
-    memset(buf, 0, size);
-    
-    for(i=0 ; i<room.history_cnt ; i++)
+    for(i=0 ; i<rooms[room_id].history_cnt ; i++)
     {
-        printf("[*] Sending room %d history %d\n", room_id, i);
-        itoa(room.history[i].type, buf+offset);
-        offset += 4;
-        itoa(room.history[i].user_id, buf+offset);
-        offset += 4;
-        itoa(room.history[i].room_id, buf+offset);
-        offset += 4;
-        memcpy(buf+offset, room.history[i].contents, CONTENTS_MAX_LEN);
-
-        send_to_user(user_id, buf, size);
+        send_to_user(user_id, rooms[room_id].history[i], MAX_REQ_BUF_SIZE);
     }
 }

@@ -4,7 +4,6 @@
 
 #define ROOMPASS_MAX_LEN 20
 #define CONTENTS_MAX_LEN 512
-#define MAX_REQ_BUF_SIZE 1024
 
 #define REQ_ROOM_CREATE_CODE 8
 #define REQ_ROOM_DELETE_CODE 1 
@@ -26,14 +25,13 @@ struct SendChat {
 	char contents[CONTENTS_MAX_LEN];
 };
 
-void user_register(char* buf, int uid);
-void room_create(char* buf, int uid);
-void room_delete(char* buf, int uid);
-void room_connect(char* buf, int uid);
-void room_invite(char* buf, int uid);
-void send_chat(char* buf, int uid);
-void user_list(char* buf, int uid);
-void room_list(char* buf, int uid);
+void user_register(char* buf, int user_id);
+void room_create(char* buf, int user_id);
+void room_delete(char* buf, int user_id);
+void room_connect(char* buf, int user_id);
+void room_invite(char* buf, int user_id);
+void send_chat(char* buf, int user_id);
+void user_list(char* buf, int user_id);
+void room_list(char* buf, int user_id);
 
-
-void handle_request(int sock, int uid);
+void handle_request(int sock, int user_id);

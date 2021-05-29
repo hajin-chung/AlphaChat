@@ -65,7 +65,8 @@ int main(int argc, char *argv[])
 			memset(message, 0, BUF_SIZE);
 			fgets(message, BUF_SIZE, stdin);
 			message[strcspn(message, "\n")] = 0;
-			printf("<~ ");
+			if(message[0]!=0)
+				printf("<~ ");
 			fwrite(message, 1, BUF_SIZE, stdout);
 			printf("\n");
 			
@@ -76,6 +77,7 @@ int main(int argc, char *argv[])
 		}
 		else if(FD_ISSET(sock, &backup_set))
 		{
+			memset(message, 0, BUF_SIZE);
 			str_len=read(sock, message, BUF_SIZE);
 			if(str_len <= 0)
 			{
