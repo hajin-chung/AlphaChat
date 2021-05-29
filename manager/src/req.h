@@ -13,17 +13,12 @@
 #define REQ_REGISTER_CODE 5
 #define REQ_ROOM_LIST_CODE 6
 #define REQ_USER_LIST_CODE 7
+#define REQ_FILE_UPLOAD_CONTENT_CODE 10
+#define REQ_FILE_DOWNLOAD 9 
 
 #define CHAT_TYPE_TEXT 1
 #define CHAT_TYPE_EMOJ 2
 #define CHAT_TYPE_FILE 3
-
-struct SendChat {
-	int type;
-	int user_id;
-	int room_id;
-	char contents[CONTENTS_MAX_LEN];
-};
 
 void user_register(char* buf, int user_id);
 void room_create(char* buf, int user_id);

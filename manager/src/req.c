@@ -8,6 +8,7 @@
 #include "room.h"
 #include "utils.h"
 #include "res.h"
+#include "file.h"
 
 void handle_request(int sock, int user_id) 
 {
@@ -27,7 +28,7 @@ void handle_request(int sock, int user_id)
         return;
     }
     
-    req_code = atoi_size(buf, 0, 4);
+    buftodata(1, buf, INT, &req_code, 0, 4);
     printf("[*] New request from %d : code %d\n", user_id, req_code);
 
     if(req_code == REQ_ROOM_CREATE_CODE)
@@ -62,6 +63,14 @@ void handle_request(int sock, int user_id)
     {
         user_list(buf, user_id);
     }
+    else if(req_code == REQ_FILE_UPLOAD_CONTENT_CODE)
+    {
+        handle_file_upload_content_req(buf);
+    }
+    else if(req_code == REQ_FILE_DOWNLOAD)
+    {
+        handle_file_download_content_req(buf);
+    }
     else
     {
         printf("[!] User %d invalid request code %d\n", user_id, req_code);
@@ -70,13 +79,12 @@ void handle_request(int sock, int user_id)
 
 void user_register(char* buf, int user_id)
 {
-    int offset = 4;
     char user_name[USER_NAME_MAX_LEN];
     char log[LOG_MAX_LEN];
 
     memset(user_name, 0, USER_NAME_MAX_LEN);
     
-    memcpy(user_name, buf+offset, USER_NAME_MAX_LEN);
+    buftodata(1, buf, CHAR, user_name, 4, USER_NAME_MAX_LEN);
 
     memcpy(users[user_id].name, user_name, USER_NAME_MAX_LEN);
     
@@ -90,14 +98,12 @@ void user_register(char* buf, int user_id)
 
 void room_create(char* buf, int user_id)
 {
-    int offset = 4;
     int room_id;
     char room_name[ROOM_NAME_MAX_LEN];
     char log[LOG_MAX_LEN];
 
     room_id = new_room_id();
-    memcpy(room_name, buf+offset, ROOM_NAME_MAX_LEN);
-
+    buftodata(1, buf, CHAR, &room_name, 4, ROOM_NAME_MAX_LEN);
     memset(&rooms[room_id], 0, sizeof(struct ROOM));
 
     rooms[room_id].status = ROOM_STATUS_ON;
@@ -121,13 +127,11 @@ void room_create(char* buf, int user_id)
 
 void room_delete(char* buf, int user_id)
 {
-    int offset = 4;
     int room_id;
     char log[104];
     memset(log, 0, LOG_MAX_LEN);
 
-    room_id = atoi_size(buf, offset, 4);
-    offset += 4;
+    buftodata(1, buf, INT, &room_id, 4, 4);
 
     if(user_id == rooms[room_id].super_user_id)
     {
@@ -150,13 +154,11 @@ void room_delete(char* buf, int user_id)
 
 void room_connect(char* buf, int user_id)
 {
-    int offset = 4;
     int room_id;
     char log[104];
     memset(log, 0, LOG_MAX_LEN);
 
-    room_id = atoi_size(buf, offset, 4);
-    offset += 4;
+    buftodata(1, buf, INT, &room_id, 4, 4);
 
     if(room_contains_user(room_id, user_id))
     {
@@ -183,10 +185,9 @@ void room_invite(char* buf, int user_id)
     char log[LOG_MAX_LEN];
     memset(log, 0, LOG_MAX_LEN);
 
-    room_id = atoi_size(buf, offset, 4);
-    offset += 4;
-    new_user_id = atoi_size(buf, offset, 4);
-    offset += 4;
+    buftodata(2, buf,
+        INT, &room_id, 4, 4,
+        INT, &new_user_id, 8, 4);
 
     is_user_in = room_contains_user(room_id, user_id);
     is_new_user_in = room_contains_user(room_id, new_user_id);
@@ -217,19 +218,16 @@ void send_chat(char* buf, int user_id)
     int type;
     int room_id;
     char contents[CONTENTS_MAX_LEN];
-    int offset = 4;
 
     int i;
     struct ROOM room;
 
     memset(contents, 0, CONTENTS_MAX_LEN);
 
-    type = atoi_size(buf, offset, 4);
-    offset+=4;
-    room_id = atoi_size(buf, offset, 4);
-    offset+=4;
-    memcpy(contents, buf+offset, CONTENTS_MAX_LEN);
-    offset+=CONTENTS_MAX_LEN;
+    buftodata(3, buf,
+        INT, &type, 4, 4,
+        INT, &room_id, 8, 4,
+        CHAR, &contents, 12, CONTENTS_MAX_LEN); 
 
     printf("[*] user %d -> room %d : %s\n", user_id, room_id, contents);
     if(room_contains_user(room_id, user_id))
@@ -240,10 +238,15 @@ void send_chat(char* buf, int user_id)
             send_to_user(room.users[i], buf, MAX_REQ_BUF_SIZE);          
         }
         push_history(room_id, buf);
+
+        if(type == CHAT_TYPE_FILE)
+        {
+            handle_file_upload_chat(buf);
+        }
     }
     else
     {
-        printf("[!] Invalid Access user %d tried chat to room %d", user_id, room_id);
+        printf("[!] Invalid Access user %d tried chat to room %d\n", user_id, room_id);
         response_code(user_id, 500, "Error", 5);
     }
 }
@@ -257,3 +260,4 @@ void room_list(char* buf, int user_id)
 {
     res_room_list(user_id);
 }
+
