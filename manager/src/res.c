@@ -43,15 +43,13 @@ void res_user_list(int uid)
     {
         itoa(users[i].id, buf + offset);
         offset += 4;
-        memcpy(buf + offset, users[i].name, USER_NAME_MAX_LEN);
+        memcpy(&buf[offset], users[i].name, USER_NAME_MAX_LEN);
         offset += USER_NAME_MAX_LEN;
-        itoa(users[i].status, buf + offset);
+        itoa(users[i].status, &buf[offset]);
         offset += 4;
     }
 
-    printf("[*] Res user list size(%d) user_cnt(%d): ", size, users_cnt);
-    fwrite(buf, sizeof(char), size, stdout);
-    printf("\n");
+    printf("[*] Res user list size(%d) user_cnt(%d) \n", size, users_cnt);
     send_to_user(uid, buf, size);
 }
 
@@ -80,8 +78,31 @@ void res_room_list(int uid)
     }
     itoa(cnt, buf);
 
-    printf("[*] Res room list: ");
-    fwrite(buf, sizeof(char), size, stdout);
-    printf("\n");
     send_to_user(uid, buf, size);
+}
+
+void res_room_connect(int user_id, int room_id)
+{
+    int i;
+    struct ROOM room = rooms[room_id];
+    char* buf;
+    int size = 4*3 + CONTENTS_MAX_LEN;
+    int offset = 0;
+
+    buf = malloc(size); 
+    memset(buf, 0, size);
+    
+    for(i=0 ; i<room.history_cnt ; i++)
+    {
+        printf("[*] Sending room %d history %d\n", room_id, i);
+        itoa(room.history[i].type, buf+offset);
+        offset += 4;
+        itoa(room.history[i].user_id, buf+offset);
+        offset += 4;
+        itoa(room.history[i].room_id, buf+offset);
+        offset += 4;
+        memcpy(buf+offset, room.history[i].contents, CONTENTS_MAX_LEN);
+
+        send_to_user(user_id, buf, size);
+    }
 }

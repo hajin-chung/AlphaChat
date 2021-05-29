@@ -7,28 +7,37 @@
 #include "set.h"
 #include "room.h"
 #include "user.h"
+#include "cmd.h"
+
+int multicast_log_flag = 0;
 
 int main()
 {
-    int mcast_sock, heartbeat_sock, serv_sock; 
-    struct sockaddr_in mcast_addr;
+    printf("[*] Server starting\n");
 
+    int mcast_sock, heartbeat_sock, serv_sock, cmd_fd; 
+    struct sockaddr_in mcast_addr;
     int fd_num;
     int i;
 
-    // init rooms, users
+    // init rooms, users, mutlicast_log
     memset(users, sizeof(users), 0);
     memset(rooms, sizeof(rooms), 0);
 
     // init sockets
+    cmd_fd = fileno(stdin);
     make_mcast_socket(&mcast_sock, &mcast_addr, MULTICAST_IP, MULTICAST_PORT);
     make_udp_socket(&heartbeat_sock, UDP_PORT);
     make_tcp_socket(&serv_sock, TCP_PORT);
 
+    print_server_info();
+
     // init fd_set
     FD_ZERO(&fdset);
+    FD_SET(cmd_fd, &fdset);
     FD_SET(heartbeat_sock, &fdset);
     FD_SET(serv_sock, &fdset);
+    printf("file descriptors : %d %d %d\n", cmd_fd, heartbeat_sock, serv_sock);
 
     fd_cnt = serv_sock;
 
@@ -49,8 +58,6 @@ int main()
         else if(fd_num == 0) // timeout, multicast every TIME_VAL_SECONDS
         {
             multicast_server_info(mcast_sock, mcast_addr);
-            print_room_info();
-            print_user_info();
         }
         else if(FD_ISSET(heartbeat_sock, &backup_set)) // heartbeat UDP
         {
@@ -59,6 +66,10 @@ int main()
         else if(FD_ISSET(serv_sock, &backup_set)) // new user
         {
             handle_new_user(serv_sock);
+        }
+        else if(FD_ISSET(cmd_fd, &backup_set))
+        {
+            handle_cmd();
         }
 
         for(i=0 ; i<users_cnt ; i++)
@@ -90,7 +101,10 @@ void multicast_server_info(int sock, struct sockaddr_in addr)
     memcpy(&buf[0], ip, strlen(ip));
     memcpy(&buf[16], port, strlen(port));
 
-    printf("[*] Multicast server info [%s] [%s]\n", ip, port);
+    if(multicast_log_flag)
+    {
+        printf("[*] Multicast server info [%s] [%s]\n", ip, port);
+    }
 	sendto(sock, buf, MULTICAST_BUF_SIZE, 0,(struct sockaddr *)&addr, sizeof(addr));    
 }
 

@@ -9,7 +9,7 @@
 #include <sys/time.h>
 #include <sys/types.h>
 
-#define BUF_SIZE 3000
+#define BUF_SIZE 5120
 
 int main(int argc, char *argv[])
 {
@@ -65,6 +65,9 @@ int main(int argc, char *argv[])
 			memset(message, 0, BUF_SIZE);
 			fgets(message, BUF_SIZE, stdin);
 			message[strcspn(message, "\n")] = 0;
+			printf("<~ ");
+			fwrite(message, 1, BUF_SIZE, stdout);
+			printf("\n");
 			
 			if(!strcmp(message,"q\n") || !strcmp(message,"Q\n"))
 				break;
@@ -73,7 +76,6 @@ int main(int argc, char *argv[])
 		}
 		else if(FD_ISSET(sock, &backup_set))
 		{
-			printf("[*] new server message\n");
 			str_len=read(sock, message, BUF_SIZE);
 			if(str_len <= 0)
 			{
@@ -82,6 +84,7 @@ int main(int argc, char *argv[])
 			}
 			printf("~> ");
 			fwrite(message, 1, BUF_SIZE, stdout);
+			printf("\n");
 		}
 
 	}

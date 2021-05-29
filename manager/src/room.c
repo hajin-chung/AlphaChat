@@ -34,3 +34,22 @@ int room_contains_user(int room_id, int user_id)
 
     return flag;
 }
+
+void push_history(int room_id, struct SendChat chat)
+{
+    int i;
+    struct ROOM room = rooms[room_id];
+
+    if(room.history_cnt >= ROOM_HISTORY_LEN)
+    {
+        for(i=0 ; i<ROOM_HISTORY_LEN ; i++)
+        {
+            room.history[i] = room.history[i+1];
+        }
+    }
+    else
+    {
+        room.history_cnt++;
+    }
+    room.history[room.history_cnt] = chat;
+}

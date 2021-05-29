@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "utils.h": "c",
+        "user.h": "c",
+        "room.h": "c",
+        "main.h": "c",
+        "const.h": "c",
+        "cmd.h": "c",
+        "req.h": "c"
+    }
+}

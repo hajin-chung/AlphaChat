@@ -165,6 +165,8 @@ void room_connect(char* buf, int uid)
     int offset = 4;
     int user_id;
     int room_id;
+    char log[104];
+    memset(log, 0, LOG_MAX_LEN);
 
     user_id = atoi_size(buf, offset, 4);
     offset += 4;
@@ -173,11 +175,16 @@ void room_connect(char* buf, int uid)
 
     if(room_contains_user(room_id, user_id))
     {
-        // send user chat history
+        printf("[*] room connect success user id %d to room id %d\n", user_id, room_id);
+        res_room_connect(user_id, room_id);
     }
     else
     {
-        // send user invalid access
+        printf("[!] room_connect() invalid access : non-invited-user tried to connect room\n");
+
+        sprintf(log, "[*] Error room connect invalid access");
+
+        response_code(uid, 500, log, LOG_MAX_LEN);
     }
 }
 
@@ -260,7 +267,7 @@ void send_chat(char* buf, int uid)
         {
             send_to_user(room.users[i], buf+4, 4*3+CONTENTS_MAX_LEN);          
         }
-        // push to history
+        push_history(room_id, chat);
     }
     else
     {
