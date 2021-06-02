@@ -7,5 +7,6 @@
         "const.h": "c",
         "cmd.h": "c",
         "req.h": "c"
-    }
+    },
+    "C_Cpp.intelliSenseEngineFallback": "Enabled"
 }

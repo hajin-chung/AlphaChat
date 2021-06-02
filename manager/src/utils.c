@@ -64,4 +64,5 @@ void buftodata(int n, char* buf, ...)
 			*((int*)pointer) = atoi(buf+offset);
 		}
 	}
+	va_end(ap);
 }

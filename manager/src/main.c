@@ -98,8 +98,8 @@ void multicast_server_info(int sock, struct sockaddr_in addr)
     itoa(TCP_PORT, port);
 
     memset(buf, 0, MULTICAST_BUF_SIZE);
-    memcpy(&buf[0], ip, strlen(ip));
-    memcpy(&buf[16], port, strlen(port));
+    memcpy(&buf[0], ip, 15);
+    memcpy(&buf[15], port, 15);
 
     if(multicast_log_flag)
     {
