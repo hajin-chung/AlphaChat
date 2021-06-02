@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 			message[strcspn(message, "\n")] = 0;
 			if(message[0]!=0)
 				printf("<~ ");
-			fwrite(message, 1, BUF_SIZE, stdout);
+			write(fileno(stdout), message, BUF_SIZE);
 			printf("\n");
 			
 			if(!strcmp(message,"q\n") || !strcmp(message,"Q\n"))
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 				return 0;
 			}
 			printf("~> ");
-			fwrite(message, 1, BUF_SIZE, stdout);
+			write(fileno(stdout), message, BUF_SIZE);
 			printf("\n");
 		}
 

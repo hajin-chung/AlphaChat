@@ -3,7 +3,7 @@
 // server info
 #define MULTICAST_IP "239.0.1.100"
 #define MULTICAST_PORT 5000
-#define SERVER_IP "172.27.78.90"
+#define SERVER_IP "172.27.70.195"
 #define TCP_PORT 3000
 #define UDP_PORT 4000
 

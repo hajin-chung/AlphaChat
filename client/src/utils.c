@@ -41,6 +41,7 @@ void buftodata(int n, char* buf, ...)
 	void* pointer;
 	int offset;
 	int size;
+	char* tmp;
 	
 	va_list ap;
 
@@ -60,7 +61,10 @@ void buftodata(int n, char* buf, ...)
 			pointer = va_arg(ap, int*);
 			offset = va_arg(ap, int);
 			size = va_arg(ap, int);
-			*((int*)pointer) = atoi(buf+offset);
+			tmp = malloc(size);
+			memset(tmp, 0, size);
+			memcpy(tmp, buf+offset, size);
+			*((int*)pointer) = atoi(tmp);
 		}
 	}
 	va_end(ap);

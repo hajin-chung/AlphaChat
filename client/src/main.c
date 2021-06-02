@@ -24,6 +24,7 @@
 #include "socks.h"
 #include "res.h"
 #include "req.h"
+#include "cmd.h"
 
 struct USER user;
 
@@ -74,6 +75,10 @@ int main()
 		else if(FD_ISSET(tcl_sock, &backup_set))
 		{
 			handle_res(tcl_sock);
+		}
+		else if(FD_ISSET(cmd_fd, &backup_set))
+		{
+			handle_cmd();
 		}
 	}
 
@@ -155,6 +160,7 @@ void get_name()
 {
 	splash_screen_log(" Name: ");
 	fgets(user.name, USER_NAME_MAX_LEN, stdin);
+	user.name[strcspn(user.name, "\n")] = 0;
 	splash_screen_log(" [*] User name set to %s", user.name);	
 
 	req_register(user.name);

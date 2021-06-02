@@ -40,10 +40,12 @@ void print_help()
     printf("|  !emoji [EmojiName] = Send Emoji.                                                                                    |\n");
     printf("|  !file [Filepath] = Send File profile to Server.                                                                     |\n");
     printf("|                                                                                                                      |\n");
-    printf("|  Press any key to continue...                                                                                        |\n");
+    printf("|  Press ENTER to exit...                                                                                              |\n");
     printf("+----------------------------------------------------------------------------------------------------------------------+\n"); 
     fflush(stdout);
-    // print();
+    while((getchar() == EOF));
+    char id;
+    scanf(" %c",&id);
 }
 
 void clear_lobby()
@@ -85,6 +87,7 @@ void print_to_lobby(char* buf)
 
         line_cnt++;
     }
+    move_cursor_cmd();
 }
 
 void room_printf(char* buf, ...)
@@ -98,7 +101,7 @@ void clear_room()
     char blank[ROOM_WIDTH * OUTPUT_HEIGHT];
     memset(blank, ' ', ROOM_WIDTH * OUTPUT_HEIGHT);
 
-    print_to_lobby(blank);
+    print_to_room(blank);
 }
 
 void print_to_room(char* buf)
@@ -141,6 +144,16 @@ void splash_screen_log(char* log, ...)
     for(i=0 ; i<SCREEN_WIDTH - 5 ; i++) printf(" ");
     fflush(stdout);
     move_cursor_name();
+    va_list args;
+    va_start(args, log);
+    vprintf(log, args);
+    va_end(args);
+    fflush(stdout);
+}
+
+void cmd_log(char* log, ...)
+{
+    move_cursor(SCREEN_HEIGHT + 1, 2);
     va_list args;
     va_start(args, log);
     vprintf(log, args);

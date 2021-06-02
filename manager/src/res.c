@@ -13,18 +13,23 @@
 void send_to_user(int uid, char* buf, int size)
 {
     write(users[uid].sock, buf, size);
+    printf("[*] <~ ");
+    write(fileno(stdout), buf, size);
+    printf("\n%d\n", size);
+
 }
 
 void response_code(int uid, int cmd_code, int req_code, char* log, int size)
 {
-    char buf[MAX_REQ_BUF_SIZE];
-    memset(buf, 0, 104);
+    char* buf;
+    buf = malloc(size + 8);
+    memset(buf, 0, size + 8);
 
     itoa(cmd_code, buf);
     itoa(req_code, buf+4);
     memcpy(buf+8, log, size);
 
-    send_to_user(uid, buf, 104);
+    send_to_user(uid, buf, size + 8);
 }
 
 void res_user_list(int uid)
@@ -64,19 +69,20 @@ void res_room_list(int uid)
     buf = malloc(size);
     memset(buf, 0, size);
 
-    offset += 4;
+    offset = 4;
     for(i=0 ; i<rooms_cnt; i++)
     {
         if(room_contains_user(rooms[i].id, uid))
         {
             cnt++;
-            itoa(rooms[i].id, buf + offset);
-            offset += 4;
-            memcpy(buf + offset, rooms[i].name, ROOM_NAME_MAX_LEN);
-            offset += ROOM_NAME_MAX_LEN;
+            datatobuf(2, buf, 
+                INT, &rooms[i].id, offset, 4,
+                CHAR, rooms[i].name, offset+4, ROOM_NAME_MAX_LEN);
+            offset += (ROOM_NAME_MAX_LEN+4);
         }
     }
-    itoa(cnt, buf);
+    datatobuf(1, buf, 
+        INT, &cnt, 0, 4);
 
     response_code(uid, REQ_ROOM_LIST_CODE, 200, buf, size);
 }

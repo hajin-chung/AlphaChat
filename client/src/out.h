@@ -17,6 +17,7 @@ void clear_screen();
 
 void print_splash_screen();
 void splash_screen_log(char* log, ...);
+void cmd_log(char* log, ...);
 
 void clear_lobby();
 void print_to_lobby(char* buf);
