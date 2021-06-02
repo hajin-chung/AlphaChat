@@ -137,7 +137,8 @@ void print_to_room(char* buf)
 void splash_screen_log(char* log, ...)
 {
     int i;
-    for(i=0 ; i<SCREEN_WIDTH - 3 ; i++) printf(" ");
+    move_cursor_name();
+    for(i=0 ; i<SCREEN_WIDTH - 5 ; i++) printf(" ");
     fflush(stdout);
     move_cursor_name();
     va_list args;

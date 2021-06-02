@@ -93,7 +93,7 @@ void user_register(char* buf, int user_id)
     memset(log, 0, LOG_MAX_LEN);
     sprintf(log, "[*] Success user register id %d, name %s", user_id, user_name);
 
-    response_code(user_id, 200, log, LOG_MAX_LEN);
+    response_code(user_id, REQ_REGISTER_CODE, 200, log, LOG_MAX_LEN);
 }
 
 void room_create(char* buf, int user_id)
@@ -122,7 +122,7 @@ void room_create(char* buf, int user_id)
     memset(log, 0, LOG_MAX_LEN);
     sprintf(log, "[*] Success room create room id %d, room name %s", room_id, room_name);
 
-    response_code(user_id, 200, log, LOG_MAX_LEN);
+    response_code(user_id, REQ_ROOM_CREATE_CODE,200, log, LOG_MAX_LEN);
 }
 
 void room_delete(char* buf, int user_id)
@@ -140,7 +140,7 @@ void room_delete(char* buf, int user_id)
 
         sprintf(log, "[*] Success room delete room id %d", room_id);
 
-        response_code(user_id, 200, log, LOG_MAX_LEN);
+        response_code(user_id, REQ_ROOM_DELETE_CODE,200, log, LOG_MAX_LEN);
     }
     else 
     {
@@ -148,7 +148,7 @@ void room_delete(char* buf, int user_id)
 
         sprintf(log, "[*] Error room delete invalid access");
 
-        response_code(user_id, 500, log, LOG_MAX_LEN);
+        response_code(user_id, REQ_ROOM_DELETE_CODE, 500, log, LOG_MAX_LEN);
     }
 }
 
@@ -171,7 +171,7 @@ void room_connect(char* buf, int user_id)
 
         sprintf(log, "[*] Error room connect invalid access");
 
-        response_code(user_id, 500, log, LOG_MAX_LEN);
+        response_code(user_id, REQ_ROOM_CONNECT_CODE, 500, log, LOG_MAX_LEN);
     }
 }
 
@@ -199,17 +199,17 @@ void room_invite(char* buf, int user_id)
         rooms[room_id].users[rooms[room_id].user_cnt] = new_user_id;
         rooms[room_id].user_cnt++;
         sprintf(log, "[*] Success room invite new user %d", new_user_id);
-        response_code(user_id, 200, log, LOG_MAX_LEN);
+        response_code(user_id, REQ_ROOM_INVITE_CODE,200, log, LOG_MAX_LEN);
     }
     else if(!is_user_in)
     {
         sprintf(log, "[!] Fail user %d not contained in room %d", user_id, room_id);
-        response_code(user_id, 300, log, LOG_MAX_LEN);
+        response_code(user_id, REQ_ROOM_INVITE_CODE, 300, log, LOG_MAX_LEN);
     }
     else if(is_new_user_in)
     {
         sprintf(log, "[!] Fail new user %d already in room %d", new_user_id, room_id);
-        response_code(user_id, 300, log, LOG_MAX_LEN);
+        response_code(user_id, REQ_ROOM_INVITE_CODE, 300, log, LOG_MAX_LEN);
     }
 }
 
@@ -235,7 +235,7 @@ void send_chat(char* buf, int user_id)
         room = rooms[room_id];
         for(i=0 ; i<room.user_cnt ; i++)
         {
-            send_to_user(room.users[i], buf, MAX_REQ_BUF_SIZE);          
+            response_code(room.users[i], REQ_SEND_CHAT_CODE, 200, buf, MAX_REQ_BUF_SIZE);          
         }
         push_history(room_id, buf);
 
@@ -247,7 +247,7 @@ void send_chat(char* buf, int user_id)
     else
     {
         printf("[!] Invalid Access user %d tried chat to room %d\n", user_id, room_id);
-        response_code(user_id, 500, "Error", 5);
+        response_code(user_id, REQ_SEND_CHAT_CODE, 500, "Error", 5);
     }
 }
 

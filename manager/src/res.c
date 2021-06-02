@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "const.h"
 #include "res.h"
 #include "utils.h"
 #include "room.h"
@@ -14,13 +15,14 @@ void send_to_user(int uid, char* buf, int size)
     write(users[uid].sock, buf, size);
 }
 
-void response_code(int uid, int code, char* log, int size)
+void response_code(int uid, int cmd_code, int req_code, char* log, int size)
 {
-    char buf[104];
+    char buf[MAX_REQ_BUF_SIZE];
     memset(buf, 0, 104);
 
-    itoa(code, buf);
-    memcpy(buf, log+4, size);
+    itoa(cmd_code, buf);
+    itoa(req_code, buf+4);
+    memcpy(buf+8, log, size);
 
     send_to_user(uid, buf, 104);
 }
@@ -76,7 +78,7 @@ void res_room_list(int uid)
     }
     itoa(cnt, buf);
 
-    send_to_user(uid, buf, size);
+    response_code(uid, REQ_ROOM_LIST_CODE, 200, buf, size);
 }
 
 void res_room_connect(int user_id, int room_id)
@@ -85,6 +87,6 @@ void res_room_connect(int user_id, int room_id)
 
     for(i=0 ; i<rooms[room_id].history_cnt ; i++)
     {
-        send_to_user(user_id, rooms[room_id].history[i], MAX_REQ_BUF_SIZE);
+        response_code(user_id, REQ_ROOM_CONNECT_CODE, 200, rooms[room_id].history[i], MAX_REQ_BUF_SIZE);
     }
 }

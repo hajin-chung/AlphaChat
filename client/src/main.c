@@ -21,6 +21,9 @@
 #include "main.h"
 #include "out.h"
 #include "utils.h"
+#include "socks.h"
+#include "res.h"
+#include "req.h"
 
 struct USER user;
 
@@ -31,16 +34,49 @@ int fd_num;
 int fd_cnt;
 int tcl_sock;
 int udp_sock;
-int stdin_fd = fileno(stdin);
+int cmd_fd;
 struct timeval tv; 
 
 int main()
 {
+	cmd_fd = fileno(stdin);
+
     clear_screen();
     print_splash_screen();
     recv_server_info();
 
     connect_tcp_server();
+	get_name();
+
+	FD_ZERO(&fdset);
+	FD_SET(tcl_sock, &fdset);
+	FD_SET(cmd_fd, &fdset);
+	FD_SET(udp_sock, &fdset);
+
+	fd_cnt = tcl_sock;
+	while(1)
+	{
+		backup_set = fdset;
+		tv.tv_sec = TIME_VAL_SECONDS;
+		tv.tv_usec = 0;
+
+		fd_num = select(fd_cnt + 1, &backup_set, 0, 0, &tv);
+
+		if(fd_num == -1)
+		{
+			printf("[!] Select ERR");
+			exit(0);
+		}
+		else if(fd_num == 0)
+		{
+			// send udp heartbeat
+		}
+		else if(FD_ISSET(tcl_sock, &backup_set))
+		{
+			handle_res(tcl_sock);
+		}
+	}
+
 }
 
 void recv_server_info()
@@ -95,18 +131,36 @@ void recv_server_info()
 
 void connect_tcp_server()
 {
+	struct sockaddr_in serv_adr;
+
 	tcl_sock=socket(PF_INET, SOCK_STREAM, 0);   
 	if(tcl_sock==-1) {
 		splash_screen_log("socket() error"); exit(0); }
 	
 	memset(&serv_adr, 0, sizeof(serv_adr));
 	serv_adr.sin_family=AF_INET;
-	serv_adr.sin_addr.s_addr=inet_addr(argv[1]);
-	serv_adr.sin_port=htons(atoi(argv[2]));
-	
-	if(connect(sock, (struct sockaddr*)&serv_adr, sizeof(serv_adr))==-1) {
+	serv_adr.sin_addr.s_addr=inet_addr(server_ip);
+	serv_adr.sin_port=htons(server_port);
+	if(connect(tcl_sock, (struct sockaddr*)&serv_adr, sizeof(serv_adr))==-1) 
+	{
 		splash_screen_log("connect() error!"); exit(0);
 	}
 	else
+	{
 		splash_screen_log("[*] TCP Server connected");
+	}
+}
+
+void get_name()
+{
+	splash_screen_log(" Name: ");
+	fgets(user.name, USER_NAME_MAX_LEN, stdin);
+	splash_screen_log(" [*] User name set to %s", user.name);	
+
+	req_register(user.name);
+}
+
+void make_udp_socket(int* sock)
+{
+	
 }
