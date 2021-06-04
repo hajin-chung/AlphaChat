@@ -3,6 +3,7 @@
 #define CMD_HELP "/help"
 #define CMD_ROOM_LIST "/rl"
 #define CMD_USER_LIST "/ul"
+#define CMD_ROOM_CREATE "/create"
 
 
 void init_lobby();

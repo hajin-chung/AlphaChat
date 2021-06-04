@@ -43,19 +43,17 @@ void res_user_list(int uid)
     memset(buf, 0, size);
 
     itoa(users_cnt, buf); 
-    offset += 4;
+    offset = 4;
     for(i=0 ; i<users_cnt ; i++)
     {
-        itoa(users[i].id, buf + offset);
-        offset += 4;
-        memcpy(&buf[offset], users[i].name, USER_NAME_MAX_LEN);
-        offset += USER_NAME_MAX_LEN;
-        itoa(users[i].status, &buf[offset]);
-        offset += 4;
+        datatobuf(3, buf,
+            INT, &users[i].id, offset, 4,
+            CHAR, users[i].name, offset+4, USER_NAME_MAX_LEN,
+            INT, &users[i].status, offset+4+USER_NAME_MAX_LEN, 4);
+        offset += (8 + USER_NAME_MAX_LEN);
     }
 
-    printf("[*] Res user list size(%d) user_cnt(%d) \n", size, users_cnt);
-    send_to_user(uid, buf, size);
+    response_code(uid, REQ_USER_LIST_CODE, 200, buf, size);
 }
 
 void res_room_list(int uid)

@@ -7,9 +7,9 @@
 #include "out.h"
 #include "main.h"
 
-char room_buf[ROOM_WIDTH * OUTPUT_HEIGHT];
-char lobby_buf[LOBBY_WIDTH * OUTPUT_HEIGHT];
-int room_buf_pos;
+char room_buf[OUTPUT_HEIGHT][ROOM_WIDTH];
+char lobby_buf[OUTPUT_HEIGHT][LOBBY_WIDTH];
+int lobby_buf_y = 0, lobby_buf_x = 0;
 
 void print_help()
 {
@@ -50,44 +50,18 @@ void print_help()
 
 void clear_lobby()
 {
-    char blank[LOBBY_WIDTH * OUTPUT_HEIGHT];
-    memset(blank, ' ', LOBBY_WIDTH * OUTPUT_HEIGHT);
+    memset(lobby_buf, 0, OUTPUT_HEIGHT * LOBBY_WIDTH);
 
-    print_to_lobby(blank);
 }
 
 void print_to_lobby(char* buf)
 {
-    int buf_pos = 0;
-    int line_cnt = 0;
-    int new_line_pos;
-    char line[LOBBY_WIDTH];
-    int line_len;
+    
+}
 
-    while(line_cnt < OUTPUT_HEIGHT)
-    {
-        move_cursor(5 + line_cnt, 2);
-        memset(line, 0, LOBBY_WIDTH);
-        memcpy(line, buf+buf_pos, LOBBY_WIDTH-2);
-        line_len = strlen(line);
-        new_line_pos = strcspn(line, "\n");
-
-        if(line_len == new_line_pos)
-        {
-            printf("%s", line);
-            buf_pos += line_len;
-        }
-        else
-        {
-            line[new_line_pos] = '\0';
-            printf("%s", line);
-            buf_pos += strlen(line) + 1;
-        }
-        fflush(stdout);
-
-        line_cnt++;
-    }
-    move_cursor_cmd();
+void print_lobby_buf()
+{
+    move_cursor()
 }
 
 void room_printf(char* buf, ...)
@@ -159,6 +133,7 @@ void cmd_log(char* log, ...)
     vprintf(log, args);
     va_end(args);
     fflush(stdout);
+    move_cursor_cmd();
 }
 
 void clear_screen()

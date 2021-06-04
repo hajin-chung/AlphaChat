@@ -42,4 +42,8 @@ void handle_cmd()
     {
         req_user_list();
     }
+    else if(check_bufecmd(buf, CMD_ROOM_CREATE))
+    {
+        req_room_create(buf);
+    }
 }

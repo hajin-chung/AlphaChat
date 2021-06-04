@@ -84,10 +84,9 @@ void res_room_list(char *buf, int code)
                 CHAR, room_name, offset+4, ROOM_NAME_MAX_LEN);
             offset += (4 + ROOM_NAME_MAX_LEN);
             cmd_log("%s [%d]", room_name, room_id);
-            sleep(1);
 
-            // sprintf(out, "%s [%d]\n", room_name, room_id);
-            // print_to_lobby(out);
+            sprintf(out, "%s [%d]\n", room_name, room_id);
+            print_to_lobby(out);
             
         }
     }
@@ -95,5 +94,30 @@ void res_room_list(char *buf, int code)
 
 void res_user_list(char *buf, int code)
 {
+    int i, offset;
+    int user_cnt;
+    int user_id;
+    int user_status;
+    char user_name[USER_NAME_MAX_LEN];
+    char out[USER_NAME_MAX_LEN + 12];
 
+    if(code == 200)
+    {
+        print_to_lobby("[*] User list\n");
+        buftodata(1, buf, INT, &user_cnt, 8, 4);        
+        offset = 12;
+        for(i=0 ; i<user_cnt ; i++)
+        {
+            memset(user_name, 0, USER_NAME_MAX_LEN);
+            memset(out, 0, USER_NAME_MAX_LEN + 4);
+
+            buftodata(2, buf, 
+                INT, &user_id, offset, 4,
+                CHAR, user_name, offset+4, USER_NAME_MAX_LEN,
+                INT, &user_status, offset+USER_NAME_MAX_LEN+4, 4);
+            offset += (8 + USER_NAME_MAX_LEN);
+            cmd_log("\n\n %d", user_status);
+            cmd_log("[%d] %s [%d]", user_id, user_name, user_status);
+        }
+    }
 }
