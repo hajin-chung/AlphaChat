@@ -247,7 +247,7 @@ void send_chat(char* buf, int user_id)
     else
     {
         printf("[!] Invalid Access user %d tried chat to room %d\n", user_id, room_id);
-        response_code(user_id, REQ_SEND_CHAT_CODE, 500, "Error", 5);
+        response_code(user_id, REQ_SEND_CHAT_CODE, 500, "Invalid Access user Error", 5);
     }
 }
 

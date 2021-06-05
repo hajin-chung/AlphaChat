@@ -6,6 +6,7 @@
 
 struct timeval tv; 
 extern int multicast_log_flag;
+extern int heartbeat_log_flag;
 
 void multicast_server_info(int sock, struct sockaddr_in addr);
 void handle_heartbeat(int sock);

@@ -31,6 +31,18 @@ void handle_cmd()
     {
         print_user_info();
     }
+    else if(strcmp(buf, CMD_TOGGLE_HB) == 0)
+    {
+        heartbeat_log_flag = !heartbeat_log_flag;
+        if(heartbeat_log_flag)
+        {
+            printf("[*] heartbeat log: on\n");
+        }
+        else
+        {
+            printf("[*] heartbeat log: off\n");
+        }
+    }
     else if(strcmp(buf, CMD_TOGGLE_MCAST) == 0)
     {
         multicast_log_flag = !multicast_log_flag;
@@ -52,7 +64,8 @@ void cmd_help()
     printf("    /server prints server info\n");
     printf("    /rooms  prints rooms info\n");
     printf("    /users  prints users info\n");
-    printf("    /mcast  toggle on/off mast log\n");
+    printf("    /hb     toggle on/off heartbeat log\n");
+    printf("    /mcast  toggle on/off mcast log\n");
     printf("----------------------------------\n");
 }
 

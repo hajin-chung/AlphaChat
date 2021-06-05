@@ -57,6 +57,7 @@ void push_history(int room_id, char* buf)
     {
         room->history_cnt++;
     }
-    memcpy(room->history[hcnt], buf, MAX_REQ_BUF_SIZE); 
+    hcnt = room->history_cnt;
+    memcpy(room->history[hcnt-1], buf, MAX_REQ_BUF_SIZE); 
     printf("[*] Chat pushed to room %d hcnt %d\n", room_id, hcnt);
 }

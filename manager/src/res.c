@@ -13,10 +13,9 @@
 void send_to_user(int uid, char* buf, int size)
 {
     write(users[uid].sock, buf, size);
-    printf("[*] <~ ");
+    printf("<~ ");
+    fflush(stdout);
     write(fileno(stdout), buf, size);
-    printf("\n%d\n", size);
-
 }
 
 void response_code(int uid, int cmd_code, int req_code, char* log, int size)

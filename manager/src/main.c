@@ -10,6 +10,7 @@
 #include "cmd.h"
 
 int multicast_log_flag = 0;
+int heartbeat_log_flag = 0;
 
 int main()
 {
@@ -128,8 +129,8 @@ void handle_heartbeat(int sock)
     else
     {
         user_id = atoi(buf);
-
-        printf("[*] Received [%d] heart beat\n", user_id);
+        if(heartbeat_log_flag)
+            printf("[*] Received [%d] heart beat\n", user_id);
         users[user_id].status = USER_STATUS_ONLINE;
     }
 

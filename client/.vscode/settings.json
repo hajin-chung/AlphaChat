@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "socks.h": "c",
+        "main.h": "c",
+        "res.h": "c",
+        "cmd.h": "c",
+        "req.h": "c",
+        "const.h": "c"
+    }
+}

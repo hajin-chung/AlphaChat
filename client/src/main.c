@@ -113,7 +113,7 @@ void recv_server_info()
 	join_addr.imr_multiaddr.s_addr=inet_addr(MULTICAST_IP);
 	join_addr.imr_interface.s_addr=htonl(INADDR_ANY);
   
-	if ( (setsockopt(recv_sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, (void*)&join_addr, sizeof(join_addr)))< 0 ) {
+	if((setsockopt(recv_sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, (void*)&join_addr, sizeof(join_addr)))< 0 ) {
 		splash_screen_log("[!] multicast setsockopt error");
 		close(recv_sock);
 		exit(1);

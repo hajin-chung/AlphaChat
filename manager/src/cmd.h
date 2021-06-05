@@ -3,6 +3,7 @@
 #define CMD_HELP "/help"
 #define CMD_PRINT_ROOMS "/rooms"
 #define CMD_PRINT_USERS "/users"
+#define CMD_TOGGLE_HB "/hb"
 #define CMD_TOGGLE_MCAST "/mcast"
 
 void handle_cmd();
