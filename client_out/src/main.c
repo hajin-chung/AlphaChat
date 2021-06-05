@@ -37,6 +37,7 @@ char user_name[USER_NAME_MAX_LEN];
 
 int main(int argc, char *argv[])
 {
+	printf("[*] Client starting\n");
 	char buf[BUF_SIZE];
 	struct timeval tv; 
 	int fd_cnt, fd_num;
