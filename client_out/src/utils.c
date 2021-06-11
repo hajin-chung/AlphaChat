@@ -4,8 +4,28 @@
 #include <stdarg.h>
 
 #include "utils.h"
+#include "const.h"
 
 #define MAX_REQ_BUF_SIZE 1024
+
+char cmd_table[CMD_CNT+1][CMD_MAX_LEN]; 
+
+void init_cmd_table()
+{
+	strcpy(cmd_table[CMD_ROOM_CREATE_CODE], "/create");
+	strcpy(cmd_table[CMD_ROOM_DELETE_CODE], "/delete");
+	strcpy(cmd_table[CMD_ROOM_CONNECT_CODE], "/connect");
+	strcpy(cmd_table[CMD_ROOM_INVITE_CODE], "/invite");
+	strcpy(cmd_table[CMD_SEND_CHAT_CODE], "/send");
+	strcpy(cmd_table[CMD_REGISTER_CODE], "/register");
+	strcpy(cmd_table[CMD_USER_LIST_CODE], "/ul");
+	strcpy(cmd_table[CMD_ROOM_LIST_CODE], "/rl");
+	strcpy(cmd_table[CMD_FILE_UPLOAD_CONTENT_CODE], "");
+	strcpy(cmd_table[CMD_FILE_DOWNLOAD], "");
+	strcpy(cmd_table[CMD_TOGGLE_HB_LOG], "/hb");
+	strcpy(cmd_table[CMD_HELP], "/help");
+}
+
 
 void itoa(int i, char *st)
 {
@@ -127,4 +147,44 @@ void print_info(char* buf, ...)
 	vprintf(buf, ap);
 	fflush(stdout);
 	va_end(ap);
+}
+
+void print_warning(char* buf, ...)
+{
+	va_list ap;
+	va_start(ap, buf);
+	vprintf(buf, ap);
+	fflush(stdout);
+	va_end(ap);
+}
+
+void print_success(char* buf, ...)
+{
+	va_list ap;
+	va_start(ap, buf);
+	vprintf(buf, ap);
+	fflush(stdout);
+	va_end(ap);
+}
+
+int cmdtocode(char* cmd)
+{
+	int i;
+	int len;
+
+	for(i=1 ; i<=CMD_CNT ; i++)
+	{
+		len = strlen(cmd_table[i]);
+		if(len >0 && strncmp(cmd_table[i], cmd, len) == 0)
+			return i;
+	}
+	return -1;
+}
+
+void remove_newline(char* buf, int size)
+{
+	int idx = strcspn(buf, "\n");
+
+	if(idx < size)
+		buf[idx] = '\0';
 }

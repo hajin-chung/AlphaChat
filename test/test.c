@@ -3,5 +3,8 @@
 
 int main()
 {
-    printf("%d", atoi_size("  1234  dsaf", 2, 4));
+    printf("\033[0;0H");
+    printf("1234");
+    printf("\033[0;0H");
+    printf("33");
 }

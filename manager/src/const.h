@@ -3,7 +3,7 @@
 // server info
 #define MULTICAST_IP "239.0.1.100"
 #define MULTICAST_PORT 5000
-#define SERVER_IP "172.27.66.127"
+#define SERVER_IP "172.22.231.2"
 #define TCP_PORT 3000
 #define UDP_PORT 4000
 
@@ -24,3 +24,4 @@
 // res specific
 #define LOG_MAX_LEN 100
 #define MAX_REQ_BUF_SIZE 1024
+#define CHAT_BUF_SIZE 600

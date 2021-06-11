@@ -49,7 +49,7 @@ void push_history(int room_id, char* buf)
     {
         for(i=0 ; i<ROOM_HISTORY_LEN-1 ; i++)
         {
-            memcpy(room->history[i], room->history[i+1], MAX_REQ_BUF_SIZE);
+            memcpy(room->history[i], room->history[i+1], CHAT_BUF_SIZE);
         }
     }
 
@@ -58,6 +58,5 @@ void push_history(int room_id, char* buf)
         room->history_cnt++;
     }
     hcnt = room->history_cnt;
-    memcpy(room->history[hcnt-1], buf, MAX_REQ_BUF_SIZE); 
-    printf("[*] Chat pushed to room %d hcnt %d\n", room_id, hcnt);
+    memcpy(room->history[hcnt-1], buf, CHAT_BUF_SIZE); 
 }

@@ -4,7 +4,7 @@
 struct ROOM {
     int id;
     char name[ROOM_NAME_MAX_LEN];
-    char history[ROOM_HISTORY_LEN][MAX_REQ_BUF_SIZE];
+    char history[ROOM_HISTORY_LEN][CHAT_BUF_SIZE];
     int history_cnt;
     int super_user_id;
     int users[ROOM_USER_MAX];

@@ -95,7 +95,7 @@ void print_room_info()
         {
             printf("        ------[CHAT]------\n");
             printf("            ");
-            fwrite(rooms[i].history[j], 1, MAX_REQ_BUF_SIZE, stdout);
+            fwrite(rooms[i].history[j], 1, CHAT_BUF_SIZE, stdout);
             printf("\n");
             printf("        ------------------\n");
         }

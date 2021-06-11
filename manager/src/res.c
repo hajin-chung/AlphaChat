@@ -12,23 +12,28 @@
 // TODO error handling
 void send_to_user(int uid, char* buf, int size)
 {
-    write(users[uid].sock, buf, size);
+    char out_buf[MAX_REQ_BUF_SIZE];
+    memset(out_buf, 0, MAX_REQ_BUF_SIZE);
+    memcpy(out_buf, buf, size);
+    write(users[uid].sock, out_buf, MAX_REQ_BUF_SIZE);
     printf("<~ ");
     fflush(stdout);
-    write(fileno(stdout), buf, size);
+    write(fileno(stdout), out_buf, MAX_REQ_BUF_SIZE);
+    printf("\n");
+    fflush(stdout);
 }
 
 void response_code(int uid, int cmd_code, int req_code, char* log, int size)
 {
-    char* buf;
-    buf = malloc(size + 8);
-    memset(buf, 0, size + 8);
+    char buf[MAX_REQ_BUF_SIZE];
+    memset(buf, 0, MAX_REQ_BUF_SIZE);
 
-    itoa(cmd_code, buf);
-    itoa(req_code, buf+4);
-    memcpy(buf+8, log, size);
+    datatobuf(3, buf,
+        INT, &cmd_code, 0, 4,
+        INT, &req_code, 4, 4,
+        CHAR, log, 8, size);
 
-    send_to_user(uid, buf, size + 8);
+    send_to_user(uid, buf, MAX_REQ_BUF_SIZE);
 }
 
 void res_user_list(int uid)
@@ -87,9 +92,10 @@ void res_room_list(int uid)
 void res_room_connect(int user_id, int room_id)
 {
     int i;
+    int size;
 
     for(i=0 ; i<rooms[room_id].history_cnt ; i++)
     {
-        response_code(user_id, REQ_ROOM_CONNECT_CODE, 200, rooms[room_id].history[i], MAX_REQ_BUF_SIZE);
+        response_code(user_id, REQ_SEND_CHAT_CODE, 200, rooms[room_id].history[i], CHAT_BUF_SIZE);
     }
 }

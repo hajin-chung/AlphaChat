@@ -80,7 +80,7 @@ void handle_request(int sock, int user_id)
 void user_register(char* buf, int user_id)
 {
     char user_name[USER_NAME_MAX_LEN];
-    char log[LOG_MAX_LEN];
+    char outbuf[4];
 
     memset(user_name, 0, USER_NAME_MAX_LEN);
     
@@ -90,10 +90,10 @@ void user_register(char* buf, int user_id)
     
     printf("[*] user_register() user id %d name %s\n", user_id, users[user_id].name);
     
-    memset(log, 0, LOG_MAX_LEN);
-    sprintf(log, "[*] Success user register id %d, name %s", user_id, user_name);
 
-    response_code(user_id, REQ_REGISTER_CODE, 200, log, LOG_MAX_LEN);
+    memset(outbuf, 0, 4);
+    datatobuf(1, outbuf, INT, &user_id, 0, 4);
+    response_code(user_id, REQ_REGISTER_CODE, 200, outbuf, 4);
 }
 
 void room_create(char* buf, int user_id)
@@ -224,10 +224,11 @@ void send_chat(char* buf, int user_id)
 
     memset(contents, 0, CONTENTS_MAX_LEN);
 
-    buftodata(3, buf,
+    buftodata(4, buf,
         INT, &type, 4, 4,
         INT, &room_id, 8, 4,
-        CHAR, &contents, 12, CONTENTS_MAX_LEN); 
+        INT, &user_id, 12, 4,
+        CHAR, &contents, 16, CONTENTS_MAX_LEN); 
 
     printf("[*] user %d -> room %d : %s\n", user_id, room_id, contents);
     if(room_contains_user(room_id, user_id))
@@ -235,7 +236,7 @@ void send_chat(char* buf, int user_id)
         room = rooms[room_id];
         for(i=0 ; i<room.user_cnt ; i++)
         {
-            response_code(room.users[i], REQ_SEND_CHAT_CODE, 200, buf, MAX_REQ_BUF_SIZE);          
+            response_code(room.users[i], REQ_SEND_CHAT_CODE, 200, buf, CHAT_BUF_SIZE);          
         }
         push_history(room_id, buf);
 
