@@ -136,6 +136,7 @@ void room_delete(char* buf, int user_id)
     if(user_id == rooms[room_id].super_user_id)
     {
         rooms[room_id].status = ROOM_STATUS_OFF;
+        memset(&rooms[room_id], 0, sizeof(struct ROOM));
         printf("[*] room_delete success room id %d user id %d\n", room_id, user_id);
 
         sprintf(log, "[*] Success room delete room id %d", room_id);

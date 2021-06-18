@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <string.h>
 
 #include "main.h"
@@ -42,6 +43,9 @@ int main()
 
     fd_cnt = serv_sock;
 
+    time_t multiTimer, now;
+    time(&multiTimer);
+
     // main select loop
     while(1)
     {
@@ -49,16 +53,19 @@ int main()
 
         tv.tv_sec = TIME_VAL_SECONDS;
         tv.tv_usec = 0;
+        time(&now);
+
+        if (difftime(now, multiTimer) >= 1)
+        {
+            multicast_server_info(mcast_sock, mcast_addr);
+            time(&multiTimer);
+        }
 
         fd_num = select(fd_cnt+1, &backup_set, 0, 0, &tv);
 
         if(fd_num == -1) // select error
         {
             printf("[!] Server Error on select\n");
-        }
-        else if(fd_num == 0) // timeout, multicast every TIME_VAL_SECONDS
-        {
-            multicast_server_info(mcast_sock, mcast_addr);
         }
         else if(FD_ISSET(heartbeat_sock, &backup_set)) // heartbeat UDP
         {
@@ -217,7 +224,7 @@ void make_tcp_socket(int* sock, int port)
 	{
 		printf("[!] TCP socket bind() error"); exit(0);
 	}
-	if(listen(*sock, 10)==-1)
+	if(listen(*sock, 100)==-1)
 	{
 		printf("[!] TCP socket listen() error"); exit(0);
 	}

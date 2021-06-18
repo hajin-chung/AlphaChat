@@ -1,9 +1,9 @@
 // const.h : shared constants
 
 // server info
-#define MULTICAST_IP "239.0.1.100"
+#define MULTICAST_IP "239.0.140.1"
 #define MULTICAST_PORT 5000
-#define SERVER_IP "172.22.233.120"
+#define SERVER_IP "172.23.55.75"
 #define TCP_PORT 3000
 #define UDP_PORT 4000
 

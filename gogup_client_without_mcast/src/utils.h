@@ -1,11 +1,7 @@
-#include "const.h"
-
 typedef enum {
 	CHAR,
 	INT
 } TYPE;
-
-extern char cmd_table[CMD_CNT+1][CMD_MAX_LEN];
 
 void itoa(int i, char *st);
 int atoi_size(char* src, int offset, int size);

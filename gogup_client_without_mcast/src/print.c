@@ -1,10 +1,11 @@
-#include "print.h"
-#include "const.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 #include <unistd.h>
 #include <stdio.h>
+
+#include "print.h"
+#include "const.h"
 
 struct printableBox* lobby;
 struct printableBox* chat;

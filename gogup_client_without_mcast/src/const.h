@@ -1,6 +1,17 @@
 #ifndef CONST_H
 #define CONST_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/wait.h>
+#include <sys/time.h>
+#include <sys/types.h>
+
 #define CMD_CNT 13
 #define CMD_ROOM_CREATE_CODE 8
 #define CMD_ROOM_DELETE_CODE 1 
@@ -58,5 +69,17 @@ extern int cur_room_id;
 extern int cur_room_name[ROOM_NAME_MAX_LEN];
 
 extern int heartbeat_log_flag;
+
+extern int DEBUG_FLAG;
+
+extern int heartbeat_sock, req_sock; // sockets
+extern struct sockaddr_in heartbeat_addr;
+extern int cmd_fd;	// stdin file desc
+extern fd_set fdset, backup_set;
+
+extern char user_list[1000][100];
+extern char room_list[1000][100];
+
+extern char cmd_table[CMD_CNT+1][CMD_MAX_LEN];
 
 #endif
